@@ -298,55 +298,147 @@ var svgCache = {};
 
 var memoizeSVG = function (query) { return svgCache[query] || createElement(query, SVG); };
 
+function svg (query) {
+  var arguments$1 = arguments;
+
+  var args = [], len = arguments.length - 1;
+  while ( len-- > 0 ) { args[ len ] = arguments$1[ len + 1 ]; }
+
+  var element;
+
+  if (isString(query)) {
+    element = memoizeSVG(query).cloneNode(false);
+  } else if (isNode(query)) {
+    element = query.cloneNode(false);
+  } else {
+    throw new Error('At least one argument required');
+  }
+
+  parseArguments(element, args);
+
+  return element;
+}
+
+svg.extend = function (query) {
+  var clone = memoizeSVG(query);
+
+  return svg.bind(this, clone);
+};
+
+//      
+
 var Redomify = function Redomify () {
   this.counter = 0;
-  this.render();
+  this.template('hey', true);
   console.log(this);
 };
-Redomify.prototype.render = function render () {
+Redomify.prototype.template = function template (message, showSecond) {
     var this$1 = this;
 
   this.view = {};
+
   this.view[0] = this.view['el'] = el('div', {
   }, [
-    text(" "),
-    this.view[1] = el('h1', {
-      class: 'test',
-      id: 'yay',
+    this.view[1] = text(" "),
+    this.view[2] = el('h1', {
+      'class': 'message'
+      , 'id': 'yay'
     }, [
-      this.view[2] = text(" Redomify <3")
+      this.view[3] = text(" Redomify <3")
     ]),
-    text(" "),
-    this.view[3] = this.view['mypara'] = el('p', {
+    this.view[4] = text(" "),
+    this.view[5] = this.view['mypara'] = el('p', {
+      'style':'display:' + ((this.show)? 'block': 'none') 
     }, [
-      this.view[4] = text()
+      this.view[6] = text( "Hello Redom " + this.counter + " People" )
     ]),
-    text(" "),
-    this.view[5] = el('div', {
+    this.view[7] = text(" "),
+    this.view[8] = (( showSecond )? el('p', {
     }, [
-      text(" "),
-      this.view[6] = el('button', {
-        onclick: function () { this$1.count(); },
+      this.view[9] = text( "A second way " + this.counter + " People" )
+    ]): null),
+    this.view[10] = text(" "),
+    this.view[11] = el('p', {
+    }, [
+      this.view[12] = text( "A third way " + this.counter + " People" )
+    ]),
+    this.view[13] = text(" "),
+    this.view[14] = el('input', {
+      'readony': ''
+      , 'placeholder': 'hey'
+    }, [
+    ]),
+    this.view[15] = text(" "),
+    this.view[16] = svg('circle', {
+      'r': '50'
+      , 'cx': '25'
+      , 'cy': '25'
+    }, [
+    ]),
+    this.view[17] = text(" "),
+    this.view[18] = svg('svg', {
+    }, [
+      this.view[19] = text(" "),
+      this.view[20] = svg('circle', {
+        'r': '50'
+        , 'cx': '25'
+        , 'cy': '25'
       }, [
-        this.view[7] = text()
       ]),
-      text(" "),
-      this.view[8] = el('button', {
-        onclick: function () { this$1.toggleShow(); },
+      this.view[21] = text(" ")
+    ]),
+    this.view[22] = text(" "),
+    this.view[23] = el('div', {
+    }, [
+      this.view[24] = text(" "),
+      this.view[25] = el('button', {
+        'data-counter': this.counter
+        , 'onclick': function () {this$1.count();}
       }, [
-        this.view[9] = text(" Toggle")
+        this.view[26] = text(this.counter)
       ]),
-      text(" ") ]),
-    text(" ") ]);
+      this.view[27] = text(" "),
+      this.view[28] = el('button', {
+        'onclick': function () { this$1.toggleShow(); }
+      }, [
+        this.view[29] = text(" Toggle")
+      ]),
+      this.view[30] = text(" ")
+    ]),
+    this.view[31] = text(" ")
+  ]);
 
   this.el = this.view.el;
   this.update();
 };
 Redomify.prototype.update = function update () {
-  this.view[4].textContent ="Hello Redom " + this.counter + " People"; 
-  setAttr(this.view[3], 'style','display:' + ((this.show)? 'block': 'none') );
-  this.view[7].textContent = this.counter;
-  setAttr(this.view[6], 'data-counter', this.counter);
+  setChildren(this.view[0], [ 
+    this.view[1], 
+    this.view[2], 
+    this.view[4], 
+    this.view[5], 
+    this.view[7], 
+    this.view[8], 
+    this.view[10], 
+    (( this.show )? this.view[11]: null), 
+    this.view[13], 
+    this.view[14], 
+    this.view[15], 
+    this.view[16], 
+    this.view[17], 
+    this.view[18], 
+    this.view[22], 
+    this.view[23], 
+    this.view[31]
+  ]);
+  setAttr(this.view[5], 'style','display:' + ((this.show)? 'block': 'none') );
+  this.view[6].textContent ="Hello Redom " + this.counter + " People"; 
+  if (this.view[8]) {
+    this.view[9].textContent ="A second way " + this.counter + " People"; 
+  }
+  this.view[12].textContent ="A third way " + this.counter + " People"; 
+  setAttr(this.view[25], 'data-counter', this.counter);
+  this.view[26].textContent = this.counter;
 };
 Redomify.prototype.toggleShow = function toggleShow () {
   this.show = !this.show;
